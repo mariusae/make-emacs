@@ -16,6 +16,9 @@ fi
 EMACSD=$1
 OUTPUT=$2
 
+# Force absolute path for $OUTPUT.
+OUTPUT=$(cd `dirname $OUTPUT`; echo $PWD/`basename $OUTPUT`)
+
 cd $EMACSD
 
 UNIQUE=`find . \! -name '*.elc' -ls | $MD5`
