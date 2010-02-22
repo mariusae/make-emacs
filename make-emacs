@@ -19,21 +19,30 @@ OUTPUT=$2
 # Force absolute path for $OUTPUT.
 OUTPUT=$(cd `dirname $OUTPUT`; echo $PWD/`basename $OUTPUT`)
 
-cd $EMACSD
 
-UNIQUE=`find . \! -name '*.elc' -ls | $MD5`
+if [ -d $EMACSD ]; then
+    cd $EMACSD
+    UNIQUE=`find . \! -name '*.elc' -ls | $MD5`
+    INIT="init.el"
+    FILES=`find . \! -name '*.elc' -print`
+else 
+    UNIQUE=`$MD5 < $EMACSD`
+    INIT=$EMACSD
+    FILES=$EMACSD
+fi
+
 UNIQUE=${UNIQUE:0:6}
 
-shar `find . \! -name '*.elc' -print`           \
-    | sed -e '1 i\
-DIR=/tmp/emacs.$UNIQUE; if [ -d $DIR ] ; then emacs -q -l $DIR/init.el "$@"; exit; fi; echo "extracting emacs.d.."; OLDDIR=$PWD; mkdir -p $DIR; cd $DIR'          \
+shar $FILES \
+    | sed -e "1 i\\
+DIR=/tmp/emacs.$UNIQUE; if [ -d \$DIR ] ; then emacs -q -l \$DIR/$INIT \"\$@\"; exit; fi; echo \"extracting emacs.d..\"; OLDDIR=\$PWD; mkdir -p \$DIR; cd \$DIR" \
     | sed -e "1 i\\
 UNIQUE=$UNIQUE"                                 \
     | sed -e '1 i\
 #!/bin/sh' \
     | sed -e '/^exit/,$ d'                      \
-    | sed -e '$ a\
-cd $OLDDIR; emacs -q -l $DIR/init.el "$@"'      \
+    | sed -e "$ a\\
+cd \$OLDDIR; emacs -q -l \$DIR/$INIT \"\$@\""      \
     | sed -e 's/^echo . .*//'                   \
     > $OUTPUT
 
