@@ -3,7 +3,8 @@
 # Make a standalone emacs configuration.
 
 if [ $# -ne 2 ]; then
-    echo "`basename $0` <emacs.d-directory> <output file>" > /dev/null 1>&2
+    echo "`basename $0` <emacs.d-directory|emacs-init-file> <output file>" \
+        > /dev/null 1>&2
     exit 1
 fi
 
