@@ -2,13 +2,15 @@
 # 
 # Make a standalone emacs configuration.
 
+set -e
+
 if [ $# -ne 2 ]; then
     echo "`basename $0` <emacs.d-directory|emacs-init-file> <output file>" \
         > /dev/null 1>&2
     exit 1
 fi
 
-if `which md5sum`; then
+if which md5sum > /dev/null; then
     MD5=md5sum
 else
     MD5=md5
